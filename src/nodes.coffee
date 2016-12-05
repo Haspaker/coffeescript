@@ -633,6 +633,17 @@ exports.Call = class Call extends Base
 
   children: ['variable', 'args']
 
+  pipe: (arg) ->
+    placeholder = no
+    for _arg, i in @args
+      if (_arg instanceof Value) &&
+         (_arg.base instanceof IdentifierLiteral) &&
+         (_arg.base.value is '__')
+        @args[i] = arg
+        placeholder = yes
+    @args.push(arg) unless placeholder
+    this
+
   # Tag this invocation as creating a new instance.
   newInstance: ->
     base = @variable?.base or @variable

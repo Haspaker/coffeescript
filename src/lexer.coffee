@@ -484,6 +484,7 @@ exports.Lexer = class Lexer
       tag = 'EXPORT_ALL'
     else if value in MATH            then tag = 'MATH'
     else if value in COMPARE         then tag = 'COMPARE'
+    else if value in PIPE            then tag = 'PIPE'
     else if value in COMPOUND_ASSIGN then tag = 'COMPOUND_ASSIGN'
     else if value in UNARY           then tag = 'UNARY'
     else if value in UNARY_MATH      then tag = 'UNARY_MATH'
@@ -891,6 +892,7 @@ NUMBER     = ///
 
 OPERATOR   = /// ^ (
   ?: [-=]>             # function
+   | \|>               # pipe
    | [-+*/%<>&|^!?=]=  # compound assign / compare
    | >>>=?             # zero-fill right shift
    | ([-+:])\1         # doubles
@@ -954,7 +956,7 @@ POSSIBLY_DIVISION   = /// ^ /=?\s ///
 # Other regexes.
 HERECOMMENT_ILLEGAL = /\*\//
 
-LINE_CONTINUER      = /// ^ \s* (?: , | \??\.(?![.\d]) | :: ) ///
+LINE_CONTINUER      = /// ^ \s* (?: , | \??\.(?![.\d]) | :: | \|> ) ///
 
 INVALID_ESCAPE      = ///
   ( (?:^|[^\\]) (?:\\\\)* )        # make sure the escape isn’t escaped
@@ -983,6 +985,8 @@ UNARY_MATH = ['!', '~']
 
 # Bit-shifting tokens.
 SHIFT = ['<<', '>>', '>>>']
+
+PIPE = ['|>']
 
 # Comparison tokens.
 COMPARE = ['==', '!=', '<', '>', '<=', '>=']
