@@ -661,6 +661,7 @@ grammar =
 
     o 'Expression PIPE Value',                  -> new Call $3, [$1]
     o 'Expression PIPE Invocation',             -> $3.pipe $1
+    o 'Expression PIPE ( Invocation )',         -> $4.pipe $1
 
     o 'Expression +  Expression',               -> new Op '+' , $1, $3
     o 'Expression -  Expression',               -> new Op '-' , $1, $3
