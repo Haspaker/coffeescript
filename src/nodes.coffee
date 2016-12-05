@@ -641,8 +641,8 @@ exports.Call = class Call extends Base
          (_arg.base.value is '__')
         @args[i] = arg
         placeholder = yes
-    @args.push(arg) unless placeholder
-    this
+    if placeholder then return this
+    else return new Call this, [arg]
 
   # Tag this invocation as creating a new instance.
   newInstance: ->
@@ -2242,11 +2242,6 @@ exports.Parens = class Parens extends Base
   isComplex : -> @body.isComplex()
 
   compileNode: (o) ->
-
-    is_placeholder = (node) ->
-      (node instanceof Value) &&
-      (node.base instanceof IdentifierLiteral) &&
-      (node.base.value is '__')
 
     contains_placeholder_literal = no
     @traverseChildren no, (node) ->
