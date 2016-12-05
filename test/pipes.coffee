@@ -3,44 +3,37 @@ test "Pipe to function", ->
 
   fn = (x) -> x * 100
 
-  eq 100, 1 |> fn
-  eq 300, 3 |> fn
+  eq 100, (1 |> fn)
+  eq 300, (3 |> fn)
 
 test "Pipe to partialy filled function", ->
 
   fn = (x,y) -> "#{x},#{y}"
 
-  eq '1,2', 2 |> fn(1)
-  eq '1,2', 2 |> fn 1
+  eq '1,2', (2 |> fn(1, __))
+  eq '1,2', (2 |> fn 1, __)
 
 test "Pipe chain", ->
 
   f = (x) -> x * 10
   g = (x) -> x + 5
 
-  eq 15, 1 |> f |> g
-  eq 60, 1 |> g |> f
+  eq 15, (1 |> f |> g)
+  eq 60, (1 |> g |> f)
 
   add = (x,y) -> x + y
   mul = (x,y) -> x * y
 
-  eq 45, 4 |> mul(10) |> add 5
-  eq 70, 4 |> add(10) |> mul 5
+  eq 45, (4 |> mul(10, __) |> add 5, __)
+  eq 70, (4 |> add(10, __) |> mul 5, __)
 
 test "Pipe on the next line", ->
 
   fn = (x,y) -> "#{x},#{y}"
 
-  eq '1,2', 2
-    |> fn(1)
+  r = 2
+    |> fn(1, __)
+  eq '1,2', r
 
-  eq '1,2', 2
-    |> fn 1
-
-
-test "Placeholder in pipe", ->
-
-  fn = (x,y,z) -> "#{x},#{y},#{z}"
-
-  eq '1,2,3', 1 |> fn __, 2, 3
-  eq '1,2,3', 2 |> fn 1, __, 3
+  eq '1,2', (2
+    |> fn 1, __)
