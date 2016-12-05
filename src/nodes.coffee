@@ -2259,9 +2259,7 @@ exports.Parens = class Parens extends Base
 
     if contains_placeholder_literal and (@body.expressions.length is 1)
       param = new Param new IdentifierLiteral '__'
-      block = new Block [@body.unwrap()]
-      f = new Code [param], @body, 'func'
-      return f.compileToFragments o, LEVEL_PAREN
+      @body = new Code [param], @body, 'func'
 
     expr = @body.unwrap()
     if expr instanceof Value and expr.isAtomic()
