@@ -2242,6 +2242,27 @@ exports.Parens = class Parens extends Base
   isComplex : -> @body.isComplex()
 
   compileNode: (o) ->
+
+    is_placeholder = (node) ->
+      (node instanceof Value) &&
+      (node.base instanceof IdentifierLiteral) &&
+      (node.base.value is '__')
+
+    contains_placeholder_literal = no
+    @traverseChildren no, (node) ->
+      if (node instanceof Value) &&
+         (node.base instanceof IdentifierLiteral) &&
+         (node.base.value is '__') &&
+         (not node.is_placeholder)
+        node.is_placeholder = yes
+        contains_placeholder_literal = yes
+
+    if contains_placeholder_literal and (@body.expressions.length is 1)
+      param = new Param new IdentifierLiteral '__'
+      block = new Block [@body.unwrap()]
+      f = new Code [param], @body, 'func'
+      return f.compileToFragments o, LEVEL_PAREN
+
     expr = @body.unwrap()
     if expr instanceof Value and expr.isAtomic()
       expr.front = @front
